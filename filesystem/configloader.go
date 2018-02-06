@@ -12,14 +12,14 @@ import (
 
 const (
 	DEFAULT_CONFIG_PATH = "/.time-tracker/.config"
+	KEY_CONFIG_TRACKING_PATH = "tracking.path"
 )
 
 var (
-	DEFAULT_CONFIG_HEADER = []byte("# Insert here the pair of key=value")
+	DEFAULT_CONFIG_HEADER = []byte("### Insert here the pair of key=value ###")
 )
 
 type Config map[string]string
-
 
 func LoadConfig(customPath string) (Config, error) {
 
@@ -30,7 +30,7 @@ func LoadConfig(customPath string) (Config, error) {
 
 	if !Exists(path) {
 		log.Print("File not exists, creating it ", path);
-		ioutil.WriteFile(path,DEFAULT_CONFIG_HEADER,0644);
+		ioutil.WriteFile(path, DEFAULT_CONFIG_HEADER, 0644);
 	}
 
 	return ReadConfig(path);
@@ -48,19 +48,14 @@ func Exists(path string) bool {
 func GetHomeFolder() string {
 	usr, err := user.Current()
 	if err != nil {
-		log.Fatal( err )
+		log.Fatal(err)
 	}
 	return usr.HomeDir;
 }
 
-
 func ReadConfig(filename string) (Config, error) {
-	// init with some bogus data
-	config := Config{
-		"port":     "8888",
-		"password": "abc123",
-		"ip":       "127.0.0.1",
-	}
+
+	config := Config{}
 	if len(filename) == 0 {
 		return config, nil
 	}
@@ -74,6 +69,11 @@ func ReadConfig(filename string) (Config, error) {
 
 	for {
 		line, err := reader.ReadString('\n')
+
+		//Skipping comment line
+		if strings.HasPrefix(line,"#") {
+			continue;
+		}
 
 		// check if the line has = sign
 		// and process the line. Ignore the rest.
