@@ -1,0 +1,99 @@
+package filesystem
+
+import (
+	"io/ioutil"
+	"os"
+	"log"
+	"os/user"
+	"bufio"
+	"strings"
+	"io"
+)
+
+const (
+	DEFAULT_CONFIG_PATH = "/.time-tracker/.config"
+)
+
+var (
+	DEFAULT_CONFIG_HEADER = []byte("# Insert here the pair of key=value")
+)
+
+type Config map[string]string
+
+
+func LoadConfig(customPath string) (Config, error) {
+
+	path := GetHomeFolder() + DEFAULT_CONFIG_PATH;
+	if len(customPath) > 0 {
+		path = customPath;
+	}
+
+	if !Exists(path) {
+		log.Print("File not exists, creating it ", path);
+		ioutil.WriteFile(path,DEFAULT_CONFIG_HEADER,0644);
+	}
+
+	return ReadConfig(path);
+}
+
+func Exists(path string) bool {
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
+func GetHomeFolder() string {
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal( err )
+	}
+	return usr.HomeDir;
+}
+
+
+func ReadConfig(filename string) (Config, error) {
+	// init with some bogus data
+	config := Config{
+		"port":     "8888",
+		"password": "abc123",
+		"ip":       "127.0.0.1",
+	}
+	if len(filename) == 0 {
+		return config, nil
+	}
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := bufio.NewReader(file)
+
+	for {
+		line, err := reader.ReadString('\n')
+
+		// check if the line has = sign
+		// and process the line. Ignore the rest.
+		if equal := strings.Index(line, "="); equal >= 0 {
+			if key := strings.TrimSpace(line[:equal]); len(key) > 0 {
+				value := ""
+				if len(line) > equal {
+					value = strings.TrimSpace(line[equal + 1:])
+				}
+				// assign the config map
+				config[key] = value
+			}
+		}
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	return config, nil
+}
+
