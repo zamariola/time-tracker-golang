@@ -99,6 +99,7 @@ func convertShortcutToDateTime(text string) time.Time {
 	case SHORTCUT_LETTER_NOW:
 		return time.Now();
 	case SHORTCUT_LETTER_LAST:
+		//todo: read last line from destination
 		return *new(time.Time);
 	case SHORTCUT_LETTER_YESTERDAY:
 		dur, err := time.ParseDuration("-24h");
