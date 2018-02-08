@@ -17,12 +17,28 @@ const (
 	SHORTCUT_LETTER_LAST = "l";
 	SHORTCUT_LETTER_YESTERDAY = "y";
 	SHORTCUT_LETTER_TODAY = "t";
+
+	//todo: get it from config
+	TIME_INPUT_PATTERN = "15:04";
+	DATE_INPUT_PATTERN = "02/01/06";
 )
 
 type Task struct {
 	message string
 	start   time.Time
 	end     time.Time
+}
+
+func (t Task) Message() string {
+	return t.message;
+}
+
+func (t Task) Start() time.Time {
+	return t.start;
+}
+
+func (t Task) End() time.Time {
+	return t.end;
 }
 
 func ParseArgs(args []string) (*Task, error) {
@@ -61,24 +77,19 @@ func parseDateTime(dateString string, timeString string) (time.Time, error) {
 	alphaNumPattern := regexp.MustCompile(`^[A-Za-z]+$`)
 	var day, hour time.Time
 
-	//TODO: Parse start and end datetimes using letters to short (today, now, yesterday and etc)
 	if alphaNumPattern.MatchString(dateString) {
 		day = convertShortcutToDateTime(dateString);
 	} else {
-		//TODO: Insert logic here
-		day, _ = time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", dateString)
+		day, _ = time.Parse(DATE_INPUT_PATTERN, dateString)
 	}
-	if alphaNumPattern.MatchString(dateString) {
+	if alphaNumPattern.MatchString(timeString) {
 		hour = convertShortcutToDateTime(timeString);
 	} else {
-		//TODO: Insert logic here
+		hour, _ = time.Parse(TIME_INPUT_PATTERN, timeString)
 	}
 
-	//TODO: Combine this two infos
-	fmt.Print(day);
-	fmt.Print(hour);
-
-	return *new(time.Time), nil;
+	return time.Date(day.Year(), day.Month(), day.Day(),
+		hour.Hour(), hour.Minute(), 0, 0, day.Location()), nil;
 }
 
 func convertShortcutToDateTime(text string) time.Time {
