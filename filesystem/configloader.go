@@ -23,7 +23,7 @@ type Config map[string]string
 
 func LoadConfig(customPath string) (Config, error) {
 
-	path := GetHomeFolder() + DEFAULT_CONFIG_PATH;
+	path := getHomeFolder() + DEFAULT_CONFIG_PATH;
 	if len(customPath) > 0 {
 		path = customPath;
 	}
@@ -45,7 +45,7 @@ func Exists(path string) bool {
 	return true
 }
 
-func GetHomeFolder() string {
+func getHomeFolder() string {
 	usr, err := user.Current()
 	if err != nil {
 		log.Fatal(err)

@@ -117,5 +117,25 @@ func TestShouldParseStartDateTimeFromYesterdayStringValue(t *testing.T) {
 
 }
 
+func TestShouldParseUnknownTextoToNowStringValue(t *testing.T) {
+
+	args := []string{MESSAGE, "UNKNOWN_TEXT", START_TIME, END_DAY, END_TIME}
+
+	task, err := ParseArgs(args);
+
+	if err != nil {
+		t.Errorf("Error while parsing")
+	}
+
+	now := time.Now();
+	expectedDay := now.Day()
+
+	if task.Start().Day() != expectedDay {
+		t.Errorf("Wrong day argument, expect: %d but got :%d", expectedDay, task.Start().Day());
+	}
+
+
+}
+
 
 

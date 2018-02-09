@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"regexp"
 	"github.com/zamariola/time-tracker-golang/util"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -108,6 +109,7 @@ func convertShortcutToDateTime(text string) time.Time {
 	case SHORTCUT_LETTER_TODAY:
 		return time.Now();
 	default:
+		log.Warn("Unknow shortcut %s, using now()", text)
 		return time.Now();
 	}
 }
