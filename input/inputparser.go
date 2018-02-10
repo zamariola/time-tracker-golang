@@ -30,6 +30,10 @@ type Task struct {
 	end     time.Time
 }
 
+func NewTask(message string, start time.Time, end time.Time) *Task {
+	return &Task{message, start, end}
+}
+
 func (t Task) Message() string {
 	return t.message;
 }
@@ -53,24 +57,25 @@ func ParseArgs(args []string) (*Task, error) {
 
 func parseArgsContent(args []string) *Task {
 
-	task := Task{}
 	var err error = nil
+	var message string;
+	var start, end time.Time;
 
 	for i := range args {
 
 		switch i {
 		case ARGS_INDEX_MESSAGE:
-			task.message = args[i];
+			message = args[i];
 		case ARGS_INDEX_START_TIME:
-			task.start, err = parseDateTime(args[i - 1], args[i]);
+			start, err = parseDateTime(args[i - 1], args[i]);
 			util.CheckError(err);
 		case ARGS_INDEX_END_TIME:
-			task.end, err = parseDateTime(args[i - 1], args[i]);
+			end, err = parseDateTime(args[i - 1], args[i]);
 			util.CheckError(err)
 		}
 	}
 
-	return &task;
+	return NewTask(message, start, end);
 
 }
 func parseDateTime(dateString string, timeString string) (time.Time, error) {
