@@ -75,7 +75,7 @@ func parseArgsContent(args []string) *Task {
 }
 func parseDateTime(dateString string, timeString string) (time.Time, error) {
 
-	alphaNumPattern := regexp.MustCompile(`^[A-Za-z]+$`)
+	alphaNumPattern := regexp.MustCompile(`^[A-Za-z_]+$`)
 	var day, hour time.Time
 
 	if alphaNumPattern.MatchString(dateString) {
@@ -109,7 +109,7 @@ func convertShortcutToDateTime(text string) time.Time {
 	case SHORTCUT_LETTER_TODAY:
 		return time.Now();
 	default:
-		log.Warn("Unknow shortcut %s, using now()", text)
+		log.Warn("Unknown shortcut %s, using now()", text)
 		return time.Now();
 	}
 }

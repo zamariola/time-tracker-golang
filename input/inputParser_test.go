@@ -114,7 +114,6 @@ func TestShouldParseStartDateTimeFromYesterdayStringValue(t *testing.T) {
 		t.Errorf("Wrong day argument, expect: %d but got :%d", expectedDay, task.Start().Day());
 	}
 
-
 }
 
 func TestShouldParseUnknownTextoToNowStringValue(t *testing.T) {
@@ -127,13 +126,12 @@ func TestShouldParseUnknownTextoToNowStringValue(t *testing.T) {
 		t.Errorf("Error while parsing")
 	}
 
-	now := time.Now();
-	expectedDay := now.Day()
+	expectedDay := time.Now().Day();
+
 
 	if task.Start().Day() != expectedDay {
 		t.Errorf("Wrong day argument, expect: %d but got :%d", expectedDay, task.Start().Day());
 	}
-
 
 }
 
