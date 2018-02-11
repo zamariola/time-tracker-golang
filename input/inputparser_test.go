@@ -20,7 +20,7 @@ func TestShouldThrownExceptionOnIncorrectArgsLength(t *testing.T) {
 	args := []string{"arg1", "arg2"};
 	_, err := ParseArgs(args)
 	if err == nil {
-		t.Errorf("expected error, but didn't receive it")
+		t.Error("expected error, but didn't receive it")
 	}
 }
 
@@ -29,7 +29,7 @@ func TestShouldParseMessageFromFirstArg(t *testing.T) {
 	task, err := ParseArgs(stubArgs);
 
 	if err != nil {
-		t.Errorf("Error while parsing")
+		t.Error("Error while parsing")
 	}
 
 	if task.Message() != MESSAGE {
@@ -42,7 +42,7 @@ func TestShouldParseStartDayFromLiteralValue(t *testing.T) {
 	task, err := ParseArgs(stubArgs);
 
 	if err != nil {
-		t.Errorf("Error while parsing")
+		t.Error("Error while parsing")
 	}
 
 	expectedDay := 5;
@@ -56,7 +56,7 @@ func TestShouldParseStartTimeFromLiteralValue(t *testing.T) {
 	task, err := ParseArgs(stubArgs);
 
 	if err != nil {
-		t.Errorf("Error while parsing")
+		t.Error("Error while parsing")
 	}
 
 	expectedHour := 11;
@@ -77,7 +77,7 @@ func TestShouldParseStartDateTimeFromNowStringValue(t *testing.T) {
 	task, err := ParseArgs(args);
 
 	if err != nil {
-		t.Errorf("Error while parsing")
+		t.Error("Error while parsing")
 	}
 
 	now := time.Now();
@@ -104,7 +104,7 @@ func TestShouldParseStartDateTimeFromYesterdayStringValue(t *testing.T) {
 	task, err := ParseArgs(args);
 
 	if err != nil {
-		t.Errorf("Error while parsing")
+		t.Error("Error while parsing")
 	}
 
 	now := time.Now();
@@ -123,11 +123,10 @@ func TestShouldParseUnknownTextoToNowStringValue(t *testing.T) {
 	task, err := ParseArgs(args);
 
 	if err != nil {
-		t.Errorf("Error while parsing")
+		t.Error("Error while parsing")
 	}
 
 	expectedDay := time.Now().Day();
-
 
 	if task.Start().Day() != expectedDay {
 		t.Errorf("Wrong day argument, expect: %d but got :%d", expectedDay, task.Start().Day());

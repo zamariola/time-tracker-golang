@@ -32,11 +32,10 @@ func (fsh FileSystemHandler) ReadLast() *input.Task {
 
 func (fsh FileSystemHandler) Format(task *input.Task) string {
 
-	log.Debug("Formatting %s %s %s", task.Message(), task.Start(), task.End())
+	log.Debugf("Formatting %s %s %s", task.Message(), task.Start(), task.End())
 	return fmt.Sprint(task.Message(), ",",
 		task.Start().Format("2006-01-02 15:04"), ",",
 		task.End().Format("2006-01-02 15:04"))
-
 }
 
 

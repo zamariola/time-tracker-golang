@@ -17,14 +17,14 @@ var (
 
 var fsh = NewFileSystemHandler("/stub/path")
 
-func TestShouldCorrectlyFormatDate(t *testing.T) {
+func TestShouldCorrectlyFormatTask(t *testing.T) {
 
 	expectedMessage := MESSAGE + "," + "2018-03-01 10:22"+","+"2018-03-02 11:33"
 	task := input.NewTask(MESSAGE, START_TIME, END_TIME)
 	realMessage := fsh.Format(task)
 
 	if(expectedMessage != realMessage) {
-		t.Error("Wrong Message Format, expect: %s but got :%s", expectedMessage, realMessage)
+		t.Errorf("Wrong Message Format, expected: %s but got :%s", expectedMessage, realMessage)
 	}
 
 
