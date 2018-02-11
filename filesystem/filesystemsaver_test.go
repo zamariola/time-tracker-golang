@@ -27,6 +27,5 @@ func TestShouldCorrectlyFormatTask(t *testing.T) {
 		t.Errorf("Wrong Message Format, expected: %s but got :%s", expectedMessage, realMessage)
 	}
 
-
 }
 

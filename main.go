@@ -24,7 +24,8 @@ func main() {
 	log.Debug(path)
 
 	fileSystemHandlerPtr := filesystem.NewFileSystemHandler(path);
-	fileSystemHandlerPtr.Write(taskPtr)
+	err = fileSystemHandlerPtr.Write(taskPtr)
+	util.CheckError(err)
 
 }
 

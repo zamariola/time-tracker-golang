@@ -36,15 +36,6 @@ func LoadConfig(customPath string) (Config, error) {
 	return ReadConfig(path);
 }
 
-func Exists(path string) bool {
-	if _, err := os.Stat(path); err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
-	}
-	return true
-}
-
 func getHomeFolder() string {
 	usr, err := user.Current()
 	if err != nil {
