@@ -27,6 +27,8 @@ func main() {
 	err = fileSystemHandlerPtr.Write(taskPtr)
 	util.CheckError(err)
 
+	fileSystemHandlerPtr.ReadLast();
+
 }
 
 func initLog() {

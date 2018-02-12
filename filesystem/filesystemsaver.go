@@ -5,6 +5,8 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
+	"bufio"
+	"github.com/zamariola/time-tracker-golang/util"
 )
 
 type FileSystemHandler struct {
@@ -31,7 +33,14 @@ func (fsh FileSystemHandler) Write(task *input.Task) error {
 
 func (fsh FileSystemHandler) ReadLast() *input.Task {
 
-	return nil;
+
+	lines,_ := ReadFile(fsh.TrackingPath());
+	for line := range lines {
+		fmt.Println(line)
+	}
+
+	return nil
+
 }
 
 func (fsh FileSystemHandler) Format(task *input.Task) string {
@@ -72,6 +81,45 @@ func CreateIfNotExists(path string) (*os.File, error) {
 		return os.Create(path)
 	}
 	return os.Open(path);
+}
+
+
+//TODO: Watch for performance issues
+func ReadFile(path string) (map[int]string, error) {
+
+	var file, err = os.OpenFile(path, os.O_RDWR, 0644)
+	if (err != nil) {
+		return make(map[int]string), err;
+	}
+	defer file.Close()
+
+	var readFile map[int]string;
+	scanner := bufio.NewScanner(file)
+	for i := 0; scanner.Scan(); i++ {
+		readFile[i] = scanner.Text();
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return readFile, nil;
+
+}
+
+func ReadEndOfFile(path string, buf *[]byte) error {
+
+	var file, err = os.OpenFile(path, os.O_RDWR, 0644)
+	if (err != nil) {
+		return err;
+	}
+	defer file.Close()
+
+	_, err = file.Seek(int64(-cap(*buf)), 2)
+	util.CheckError(err)
+
+	file.Read(*buf);
+	return nil
 }
 
 
