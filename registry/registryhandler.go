@@ -1,9 +1,12 @@
 package registry
 
-import "github.com/zamariola/time-tracker-golang/input"
+import (
+	"github.com/zamariola/time-tracker-golang/input"
+	"github.com/zamariola/time-tracker-golang/entity"
+)
 
 type Repository interface {
-	Write(task *input.Task)
-	ReadLast() *input.Task
-	Format(task *input.Task)
+	Write(task *entity.Task)
+	ReadLast() *entity.Task
+	Format(task *entity.Task)
 }
