@@ -1,4 +1,4 @@
 language: go
 
 go:
- - 1.9.0
+  - 1.7.x
