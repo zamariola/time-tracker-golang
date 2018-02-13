@@ -14,16 +14,19 @@ func main() {
 	initLog()
 
 	argsWithoutProg := os.Args[1:]
-	log.Debug(argsWithoutProg);
+	log.Debugf("Parsing input args: %s", argsWithoutProg);
 
 	taskPtr, err := input.ParseArgs(argsWithoutProg);
 	util.CheckError(err);
 
 	fileSystemHandlerPtr := filesystem.NewFileSystemHandlerFromDefaultConfig();
+
+	log.Debugf("Trying to write task %s to filesystem", *fileSystemHandlerPtr);
+
 	err = fileSystemHandlerPtr.Write(taskPtr)
 	util.CheckError(err)
 
-	fmt.Printf("Saved : %s", *fileSystemHandlerPtr)
+	fmt.Printf("Saved : %s - %s - %s \n", taskPtr.Message(), taskPtr.Start(), taskPtr.End())
 }
 
 func initLog() {

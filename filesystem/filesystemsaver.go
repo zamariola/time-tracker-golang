@@ -32,6 +32,7 @@ func (fsh FileSystemHandler) Write(task *entity.Task) error {
 
 	_, err := CreateIfNotExists(fsh.TrackingPath());
 	if err != nil {
+		log.Errorf("Error while writing task %s on file %s", task, fsh.TrackingPath())
 		return err;
 	}
 
@@ -89,9 +90,11 @@ func WriteStringToFile(path, text string) error {
 func Exists(path string) bool {
 	if _, err := os.Stat(path); err != nil {
 		if os.IsNotExist(err) {
+			log.Debugf("File %s not exists", path)
 			return false
 		}
 	}
+	log.Debugf("File %s already exists", path)
 	return true
 }
 
@@ -141,7 +144,6 @@ func ReadEndOfFile(path string, buf *[]byte) error {
 	file.Read(*buf);
 	return nil
 }
-
 
 func NewFileSystemHandlerFromDefaultConfig() *FileSystemHandler {
 	config, _ := LoadConfig("")
