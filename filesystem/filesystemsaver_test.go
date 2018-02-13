@@ -2,8 +2,8 @@ package filesystem
 
 import (
 	"testing"
-	"github.com/zamariola/time-tracker-golang/input"
 	"time"
+	"github.com/zamariola/time-tracker-golang/entity"
 )
 
 const (
@@ -20,7 +20,7 @@ var fsh = NewFileSystemHandler("/stub/path")
 func TestShouldCorrectlyFormatTask(t *testing.T) {
 
 	expectedMessage := MESSAGE + "," + "2018-03-01 10:22"+","+"2018-03-02 11:33"
-	task := input.NewTask(MESSAGE, START_TIME, END_TIME)
+	task := entity.NewTask(MESSAGE, START_TIME, END_TIME)
 	realMessage := fsh.Format(task)
 
 	if(expectedMessage != realMessage) {

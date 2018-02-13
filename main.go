@@ -18,17 +18,11 @@ func main() {
 	taskPtr, err := input.ParseArgs(argsWithoutProg);
 	util.CheckError(err);
 
-
-	config, _ := filesystem.LoadConfig("")
-	path := config[filesystem.KEY_CONFIG_TRACKING_PATH];
-	log.Debug(path)
-
-	fileSystemHandlerPtr := filesystem.NewFileSystemHandler(path);
+	fileSystemHandlerPtr := filesystem.NewFileSystemHandlerFromDefaultConfig();
 	err = fileSystemHandlerPtr.Write(taskPtr)
 	util.CheckError(err)
 
-	fileSystemHandlerPtr.ReadLast();
-
+	//fmt.Printf("Saved : %s", *fileSystemHandlerPtr)
 }
 
 func initLog() {

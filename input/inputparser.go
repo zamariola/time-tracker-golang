@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"github.com/zamariola/time-tracker-golang/util"
 	log "github.com/sirupsen/logrus"
+	"github.com/zamariola/time-tracker-golang/entity"
+	"github.com/zamariola/time-tracker-golang/filesystem"
 )
 
 const (
@@ -24,38 +26,18 @@ const (
 	DATE_INPUT_PATTERN = "02/01/06";
 )
 
-type Task struct {
-	message string
-	start   time.Time
-	end     time.Time
-}
 
-func NewTask(message string, start time.Time, end time.Time) *Task {
-	return &Task{message, start, end}
-}
 
-func (t Task) Message() string {
-	return t.message;
-}
-
-func (t Task) Start() time.Time {
-	return t.start;
-}
-
-func (t Task) End() time.Time {
-	return t.end;
-}
-
-func ParseArgs(args []string) (*Task, error) {
+func ParseArgs(args []string) (*entity.Task, error) {
 
 	if len(args) < 5 {
-		return &Task{}, errors.New(fmt.Sprintf("Invalid parameters length, expected 5 received %d", len(args)))
+		return &entity.Task{}, errors.New(fmt.Sprintf("Invalid parameters length, expected 5 received %d", len(args)))
 	}
 
 	return parseArgsContent(args), nil;
 }
 
-func parseArgsContent(args []string) *Task {
+func parseArgsContent(args []string) *entity.Task {
 
 	var err error = nil
 	var message string;
@@ -75,7 +57,7 @@ func parseArgsContent(args []string) *Task {
 		}
 	}
 
-	return NewTask(message, start, end);
+	return entity.NewTask(message, start, end);
 
 }
 func parseDateTime(dateString string, timeString string) (time.Time, error) {
@@ -105,8 +87,10 @@ func convertShortcutToDateTime(text string) time.Time {
 	case SHORTCUT_LETTER_NOW:
 		return time.Now();
 	case SHORTCUT_LETTER_LAST:
-		//todo: read last line from destination
-		return *new(time.Time);
+		//todo: make flexible destination
+		fsh := filesystem.NewFileSystemHandlerFromDefaultConfig();
+
+		return fsh.ReadLast().End();
 	case SHORTCUT_LETTER_YESTERDAY:
 		dur, err := time.ParseDuration("-24h");
 		util.CheckError(err);

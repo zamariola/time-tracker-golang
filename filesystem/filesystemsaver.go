@@ -1,12 +1,19 @@
 package filesystem
 
 import (
-	"github.com/zamariola/time-tracker-golang/input"
+	"github.com/zamariola/time-tracker-golang/entity"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"bufio"
 	"github.com/zamariola/time-tracker-golang/util"
+	"strings"
+	"time"
+)
+
+const (
+	LINE_SEPARATOR = ","
+	MARSHALLING_DATE_FORMAT = "2006-01-02 15:04"
 )
 
 type FileSystemHandler struct {
@@ -21,7 +28,7 @@ func NewFileSystemHandler(path string) *FileSystemHandler {
 	return &FileSystemHandler{path}
 }
 
-func (fsh FileSystemHandler) Write(task *input.Task) error {
+func (fsh FileSystemHandler) Write(task *entity.Task) error {
 
 	_, err := CreateIfNotExists(fsh.TrackingPath());
 	if err != nil {
@@ -31,24 +38,37 @@ func (fsh FileSystemHandler) Write(task *input.Task) error {
 	return WriteStringToFile(fsh.TrackingPath(), fsh.Format(task) + "\n");
 }
 
-func (fsh FileSystemHandler) ReadLast() *input.Task {
+func (fsh FileSystemHandler) ReadLast() *entity.Task {
 
-
-	lines,_ := ReadFile(fsh.TrackingPath());
-	for line := range lines {
-		fmt.Println(line)
-	}
-
-	return nil
+	lines, err := ReadFile(fsh.TrackingPath());
+	util.CheckError(err);
+	keys := util.GetIntMapKeys(&lines);
+	lastTaskPtr := Unmarshall(lines[len(keys) - 1]);
+	return lastTaskPtr;
 
 }
 
-func (fsh FileSystemHandler) Format(task *input.Task) string {
+func (fsh FileSystemHandler) Format(task *entity.Task) string {
 
 	log.Debugf("Formatting %s %s %s", task.Message(), task.Start(), task.End())
-	return fmt.Sprint(task.Message(), ",",
-		task.Start().Format("2006-01-02 15:04"), ",",
-		task.End().Format("2006-01-02 15:04"))
+	return fmt.Sprint(task.Message(), LINE_SEPARATOR,
+		task.Start().Format(MARSHALLING_DATE_FORMAT), LINE_SEPARATOR,
+		task.End().Format(MARSHALLING_DATE_FORMAT))
+}
+
+func Unmarshall(text string) *entity.Task {
+
+	log.Debugf("Unmarshalling %s", text);
+	columns := strings.Split(text, LINE_SEPARATOR);
+
+	message := columns[0];
+	startTime, err := time.Parse(MARSHALLING_DATE_FORMAT, columns[1]);
+	util.CheckError(err);
+
+	endTime, err := time.Parse(MARSHALLING_DATE_FORMAT, columns[2]);
+	util.CheckError(err);
+
+	return entity.NewTask(message, startTime, endTime);
 }
 
 func WriteStringToFile(path, text string) error {
@@ -93,7 +113,7 @@ func ReadFile(path string) (map[int]string, error) {
 	}
 	defer file.Close()
 
-	var readFile map[int]string;
+	readFile := make(map[int]string);
 	scanner := bufio.NewScanner(file)
 	for i := 0; scanner.Scan(); i++ {
 		readFile[i] = scanner.Text();
@@ -122,4 +142,10 @@ func ReadEndOfFile(path string, buf *[]byte) error {
 	return nil
 }
 
+
+func NewFileSystemHandlerFromDefaultConfig() *FileSystemHandler {
+	config, _ := LoadConfig("")
+	path := config[KEY_CONFIG_TRACKING_PATH];
+	return NewFileSystemHandler(path);
+}
 
