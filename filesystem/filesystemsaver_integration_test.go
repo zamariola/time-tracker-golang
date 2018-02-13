@@ -2,65 +2,52 @@ package filesystem
 
 import (
 	"testing"
-	"time"
 	"github.com/zamariola/time-tracker-golang/entity"
+	"flag"
+	"path/filepath"
+	"io/ioutil"
+	"fmt"
+	"os"
 )
 
 const (
-	MESSAGE = "Stub Message";
+	TESTDATA_PATH = "../testdata"
+	TEST_WRITE_GOLDEN_PATH = "written_task.golden"
 )
 
-var (
-	START_TIME, _ = time.Parse(time.RFC3339, "2018-03-01T10:22:00Z")
-	END_TIME, _ = time.Parse(time.RFC3339, "2018-03-02T11:33:00Z")
-)
+var update = flag.Bool("update", false, "update .golden files")
 
-var fsh = NewFileSystemHandler("/home/CIT/leonardoz/.time-tracker/time-tracker_TEST.log")
+func TestShouldAppendTaskOnEndOfFile(t *testing.T) {
 
-func TestShouldCorrectlyFormatTask(t *testing.T) {
+	filePath := filepath.Join(TESTDATA_PATH, t.Name() + ".log");
 
-	expectedMessage := MESSAGE + "," + "2018-03-01 10:22" + "," + "2018-03-02 11:33"
-	task := entity.NewTask(MESSAGE, START_TIME, END_TIME)
-	realMessage := fsh.Format(task)
+	os.Remove(filePath);
 
-	if (expectedMessage != realMessage) {
-		t.Errorf("Wrong Message Format, expected: %s but got: %s", expectedMessage, realMessage)
-	}
-
-}
-
-func TestShouldUnmarshallFormattedTask(t *testing.T) {
-
-	textToUnmarshall := MESSAGE + "," + "2018-03-01 10:22" + "," + "2018-05-02 11:33";
-	taskPtr := Unmarshall(textToUnmarshall);
-
-	if (taskPtr.Message() != MESSAGE) {
-		t.Errorf("Wrong Unmarshal, expected: %s but got: %s", MESSAGE, taskPtr.Message())
-	}
-
-	if (!compareMicroDates(taskPtr.Start(), 2018, 3, 1, 10, 22)) {
-		t.Errorf("Wrong Unmarshal, expected: %s but got: %s", "2018-03-01 10:22", taskPtr.Start())
-	}
-
-	if (!compareMicroDates(taskPtr.End(), 2018, 5, 2, 11, 33)) {
-		t.Errorf("Wrong Unmarshal, expected: %s but got: %s", "2018-05-02 11:33", taskPtr.End())
-	}
-
-}
-
-func TestShouldAppendTaskOnEndOfFile(t *testing.T){
+	fsh := NewFileSystemHandler(filePath);
 
 	task := entity.NewTask(MESSAGE, START_TIME, END_TIME);
-	fsh.Write(task)
+
+	golden := filepath.Join(TESTDATA_PATH, TEST_WRITE_GOLDEN_PATH);
+
+	if *update || !Exists(golden) {
+		fmt.Println("Writing goldenfile " + golden);
+		ioutil.WriteFile(golden, []byte(fsh.Format(task) + "\n"), 0644)
+	}
+
+	err := fsh.Write(task)
+
+	if (err != nil) {
+		t.Error(err);
+	}
+
+	expectedFile, _ := ioutil.ReadFile(golden)
+	actualFile, _ := ioutil.ReadFile(filePath)
+
+	if (string(expectedFile) != string(actualFile)) {
+		t.Errorf("Error while writing file, expected: %s, got: %s", string(expectedFile), string(actualFile))
+	}
 }
 
-func compareMicroDates(timeToCompare time.Time, year, month, day, hour, minute int) bool {
-	return timeToCompare.Year() == year &&
-		int(timeToCompare.Month()) == month &&
-		timeToCompare.Day() == day &&
-		timeToCompare.Hour() == hour &&
-		timeToCompare.Minute() == minute
-}
 
 
 

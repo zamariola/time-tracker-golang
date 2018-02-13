@@ -6,6 +6,7 @@ import (
 	"github.com/zamariola/time-tracker-golang/input"
 	"github.com/zamariola/time-tracker-golang/util"
 	log "github.com/sirupsen/logrus"
+	"fmt"
 )
 
 func main() {
@@ -22,7 +23,7 @@ func main() {
 	err = fileSystemHandlerPtr.Write(taskPtr)
 	util.CheckError(err)
 
-	//fmt.Printf("Saved : %s", *fileSystemHandlerPtr)
+	fmt.Printf("Saved : %s", *fileSystemHandlerPtr)
 }
 
 func initLog() {
