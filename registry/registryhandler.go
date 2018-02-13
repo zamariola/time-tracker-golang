@@ -1,7 +1,6 @@
 package registry
 
 import (
-	"github.com/zamariola/time-tracker-golang/input"
 	"github.com/zamariola/time-tracker-golang/entity"
 )
 
