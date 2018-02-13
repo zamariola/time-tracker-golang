@@ -34,11 +34,7 @@ func TestShouldAppendTaskOnEndOfFile(t *testing.T) {
 		ioutil.WriteFile(golden, []byte(fsh.Format(task) + "\n"), 0644)
 	}
 
-	err := fsh.Write(task)
-
-	if (err != nil) {
-		t.Error(err);
-	}
+	fsh.Write(task)
 
 	expectedFile, _ := ioutil.ReadFile(golden)
 	actualFile, _ := ioutil.ReadFile(filePath)
