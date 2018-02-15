@@ -2,7 +2,6 @@ package input
 
 import (
 	"time"
-	"errors"
 	"fmt"
 	"regexp"
 	"github.com/zamariola/time-tracker-golang/util"
@@ -31,7 +30,7 @@ const (
 func ParseArgs(args []string) (*entity.Task, error) {
 
 	if len(args) < 5 {
-		return &entity.Task{}, errors.New(fmt.Sprintf("Invalid parameters length, expected 5 received %d", len(args)))
+		return &entity.Task{}, fmt.Errorf("Invalid parameters length, expected 5 received %d", len(args))
 	}
 
 	return parseArgsContent(args), nil;
@@ -39,7 +38,7 @@ func ParseArgs(args []string) (*entity.Task, error) {
 
 func parseArgsContent(args []string) *entity.Task {
 
-	var err error = nil
+	var err error;
 	var message string;
 	var start, end time.Time;
 

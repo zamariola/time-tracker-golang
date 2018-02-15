@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"strings"
 	"io"
+	"github.com/zamariola/time-tracker-golang/util"
 )
 
 const (
@@ -30,7 +31,8 @@ func LoadConfig(customPath string) (Config, error) {
 
 	if !Exists(path) {
 		log.Print("File not exists, creating it ", path);
-		ioutil.WriteFile(path, DEFAULT_CONFIG_HEADER, 0644);
+		err := ioutil.WriteFile(path, DEFAULT_CONFIG_HEADER, 0644);
+		util.CheckError(err)
 	}
 
 	return ReadConfig(path);

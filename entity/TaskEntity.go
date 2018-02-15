@@ -2,6 +2,7 @@ package entity
 
 import "time"
 
+//A Task represents the workjob done
 type Task struct {
 	message string
 	start   time.Time

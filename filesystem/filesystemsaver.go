@@ -81,10 +81,7 @@ func WriteStringToFile(path, text string) error {
 	defer f.Close()
 
 	_, err = f.WriteString(text)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err;
 }
 
 func Exists(path string) bool {
@@ -141,8 +138,8 @@ func ReadEndOfFile(path string, buf *[]byte) error {
 	_, err = file.Seek(int64(-cap(*buf)), 2)
 	util.CheckError(err)
 
-	file.Read(*buf);
-	return nil
+	_,err = file.Read(*buf);
+	return err
 }
 
 func NewFileSystemHandlerFromDefaultConfig() *FileSystemHandler {
