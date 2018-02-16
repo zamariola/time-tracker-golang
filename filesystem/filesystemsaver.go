@@ -72,13 +72,19 @@ func Unmarshall(text string) *entity.Task {
 	return entity.NewTask(message, startTime, endTime);
 }
 
-func WriteStringToFile(path, text string) error {
+func WriteStringToFile(path, text string) (err error) {
 
 	f, err := os.OpenFile(path, os.O_APPEND | os.O_WRONLY, os.ModeAppend)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		closeErr := f.Close()
+
+		if (closeErr != nil && err == nil) {
+			err = closeErr;
+		}
+	}()
 
 	_, err = f.WriteString(text)
 	return err;
@@ -138,7 +144,7 @@ func ReadEndOfFile(path string, buf *[]byte) error {
 	_, err = file.Seek(int64(-cap(*buf)), 2)
 	util.CheckError(err)
 
-	_,err = file.Read(*buf);
+	_, err = file.Read(*buf);
 	return err
 }
 

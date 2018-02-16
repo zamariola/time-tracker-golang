@@ -63,20 +63,21 @@ func parseDateTime(dateString string, timeString string) (time.Time, error) {
 
 	alphaNumPattern := regexp.MustCompile(`^[A-Za-z_]+$`)
 	var day, hour time.Time
+	var err error
 
 	if alphaNumPattern.MatchString(dateString) {
 		day = convertShortcutToDateTime(dateString);
 	} else {
-		day, _ = time.Parse(DATE_INPUT_PATTERN, dateString)
+		day, err = time.Parse(DATE_INPUT_PATTERN, dateString)
 	}
 	if alphaNumPattern.MatchString(timeString) {
 		hour = convertShortcutToDateTime(timeString);
 	} else {
-		hour, _ = time.Parse(TIME_INPUT_PATTERN, timeString)
+		hour, err = time.Parse(TIME_INPUT_PATTERN, timeString)
 	}
 
 	return time.Date(day.Year(), day.Month(), day.Day(),
-		hour.Hour(), hour.Minute(), 0, 0, day.Location()), nil;
+		hour.Hour(), hour.Minute(), 0, 0, day.Location()), err;
 }
 
 func convertShortcutToDateTime(text string) time.Time {
